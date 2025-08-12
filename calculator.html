@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🧮 Mini Calculator</title>
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #ef4ecc, #f9a8d4);
+      color: #333;
+      transition: background 0.3s, color 0.3s;
+    }
+    #calc-display {
+      width: 100%;
+      padding: 10px;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      text-align: right;
+      background: #fff0f6;
+      transition: background 0.3s, color 0.3s;
+    }
+    .calc-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .calc-buttons button {
+      padding: 15px;
+      font-size: 1.2rem;
+      background: #f9a8d4;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      color: #4a0033;
+      font-weight: 600;
+      box-shadow: 0 3px 6px rgba(249, 168, 212, 0.5);
+    }
+    .calc-buttons button:hover {
+      background: #f472b6;
+      box-shadow: 0 5px 10px rgba(244, 114, 182, 0.7);
+    }
+    .clear-btn {
+      grid-column: span 4;
+      background: #ff6b81;
+      color: white;
+      box-shadow: 0 3px 6px rgba(255, 107, 129, 0.6);
+    }
+    .clear-btn:hover {
+      background: #e05063;
+      box-shadow: 0 5px 10px rgba(224, 80, 99, 0.8);
+    }
+
+    /* Dark mode styles */
+    body.dark {
+      background: linear-gradient(135deg, #311432, #611f5a);
+      color: #f8d7e0;
+    }
+    body.dark #calc-display {
+      background: #4c2554;
+      color: #f8d7e0;
+      border: 1px solid #7f4a7f;
+      box-shadow: inset 0 0 8px #732e84;
+    }
+    body.dark .calc-buttons button {
+      background: #732e84;
+      color: #f8d7e0;
+      box-shadow: 0 3px 6px rgba(115, 46, 132, 0.8);
+    }
+    body.dark .calc-buttons button:hover {
+      background: #9e43be;
+      box-shadow: 0 5px 10px rgba(158, 67, 190, 0.9);
+    }
+    body.dark .clear-btn {
+      background: #aa1f59;
+      box-shadow: 0 3px 6px rgba(170, 31, 89, 0.8);
+    }
+    body.dark .clear-btn:hover {
+      background: #7e1743;
+      box-shadow: 0 5px 10px rgba(126, 23, 67, 1);
+    }
+
+    /* Toggle button */
+    .controls {
+      margin-bottom: 15px;
+    }
+    .controls button {
+      padding: 10px 20px;
+      background: #f9a8d4;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 16px;
+      color: #4a0033;
+      box-shadow: 0 3px 6px rgba(249, 168, 212, 0.6);
+      transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+    }
+    .controls button:hover {
+      background: #f472b6;
+      box-shadow: 0 5px 12px rgba(244, 114, 182, 0.9);
+    }
+    body.dark .controls button {
+      background: #9e43be;
+      color: #f8d7e0;
+      box-shadow: 0 3px 6px rgba(158, 67, 190, 0.8);
+    }
+    body.dark .controls button:hover {
+      background: #bb6fe1;
+      box-shadow: 0 5px 12px rgba(187, 111, 225, 1);
+    }
+  </style>
+</head>
+<body>
+  <h1>🧮 Mini Calculator</h1>
+
+  <div class="controls">
+    <button id="toggleDarkMode">Toggle Light/Dark Mode</button>
+  </div>
+
+  <input type="text" id="calc-display" readonly />
+
+  <div class="calc-buttons">
+    <button onclick="pressCalc('7')">7</button>
+    <button onclick="pressCalc('8')">8</button>
+    <button onclick="pressCalc('9')">9</button>
+    <button onclick="pressCalc('/')">÷</button>
+
+    <button onclick="pressCalc('4')">4</button>
+    <button onclick="pressCalc('5')">5</button>
+    <button onclick="pressCalc('6')">6</button>
+    <button onclick="pressCalc('*')">×</button>
+
+    <button onclick="pressCalc('1')">1</button>
+    <button onclick="pressCalc('2')">2</button>
+    <button onclick="pressCalc('3')">3</button>
+    <button onclick="pressCalc('-')">−</button>
+
+    <button onclick="pressCalc('0')">0</button>
+    <button onclick="pressCalc('.')">.</button>
+    <button onclick="calculateResult()">=</button>
+    <button onclick="pressCalc('+')">+</button>
+
+    <button class="clear-btn" onclick="clearCalc()">C</button>
+  </div>
+
+  <script>
+    // Dark mode logic with toggle and auto after 7 PM
+    function applyDarkModeFromStorage() {
+      const hour = new Date().getHours();
+      const stored = localStorage.getItem('dark-mode') === 'true';
+
+      if (stored || hour >= 19 || hour < 7) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      applyDarkModeFromStorage();
+
+      document.getElementById('toggleDarkMode').addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark');
+        localStorage.setItem('dark-mode', isDark);
+      });
+    });
+
+    let calcExpression = "";
+
+    function pressCalc(val) {
+      calcExpression += val;
+      document.getElementById("calc-display").value = calcExpression;
+    }
+
+    function calculateResult() {
+      try {
+        // Use eval safely here because input is restricted to buttons
+        calcExpression = eval(calcExpression).toString();
+        document.getElementById("calc-display").value = calcExpression;
+      } catch {
+        document.getElementById("calc-display").value = "Error";
+        calcExpression = "";
+      }
+    }
+
+    function clearCalc() {
+      calcExpression = "";
+      document.getElementById("calc-display").value = "";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>⏰ Timer & Alarm Clock</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&family=Pacifico&display=swap');
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background-color: #f9e7f4;  /* light mode background */
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+      color: #4a154b;  /* dark purple text */
+      transition: background 0.3s, color 0.3s;
+    }
+
+    h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 2.8em;
+      margin-bottom: 20px;
+      color: #9c27b0;
+    }
+
+    #darkModeToggle {
+      margin-bottom: 30px;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 24px;
+      background: #9c27b0;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background 0.3s ease;
+      box-shadow: none;
+    }
+    #darkModeToggle:hover {
+      background: #7b1fa2;
+      box-shadow: none;
+    }
+
+    #clock {
+      font-size: 2.5em;
+      margin-bottom: 40px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #6a1b9a;
+    }
+
+    .section {
+      background: white;
+      border-radius: 24px;
+      padding: 35px 25px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 440px;
+      box-shadow: 0 6px 12px rgba(156,39,176,0.15);
+      color: #4a154b;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .section h2 {
+      margin-bottom: 20px;
+      color: #7b1fa2;
+      font-weight: 700;
+    }
+
+    input {
+      padding: 10px 14px;
+      font-size: 1.1rem;
+      margin: 8px 6px;
+      width: 70px;
+      text-align: center;
+      border: 2px solid #9c27b0;
+      border-radius: 16px;
+      font-weight: 600;
+      color: #6a1b9a;
+      transition: border-color 0.3s;
+      background: #fff;
+    }
+    input:focus {
+      outline: none;
+      border-color: #7b1fa2;
+      box-shadow: 0 0 6px #7b1fa2aa;
+    }
+
+    .time-display {
+      font-size: 3rem;
+      margin: 25px 0;
+      font-weight: 900;
+      letter-spacing: 4px;
+      color: #9c27b0;
+      transition: color 0.3s;
+    }
+
+    button {
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      margin: 12px 10px;
+      border: none;
+      border-radius: 28px;
+      background: #9c27b0;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: none;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+    button:hover {
+      background: #7b1fa2;
+      box-shadow: none;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      font-weight: 600;
+    }
+
+    li {
+      margin: 7px 0;
+      font-size: 1.1rem;
+      color: #7b1fa2;
+    }
+
+    /* Glow effect */
+    button.glow {
+      box-shadow: 0 0 15px 4px rgba(156, 39, 176, 0.4);
+    }
+
+    /* Minimal Dark Mode */
+    body.dark {
+      background-color: #2c2c3a;
+      color: #ccc;
+    }
+    body.dark h1 {
+      color: #cfa3ff;
+    }
+    body.dark #darkModeToggle {
+      background: #7b1fa2;
+      color: #eee;
+    }
+    body.dark #darkModeToggle:hover {
+      background: #6a1b9a;
+    }
+    body.dark #clock {
+      color: #c7b1ff;
+    }
+    body.dark .section {
+      background: #3a3a50;
+      box-shadow: none;
+      color: #dcd6f7;
+    }
+    body.dark .section h2 {
+      color: #cfa3ff;
+    }
+    body.dark input {
+      background: #4a4a6e;
+      border: 2px solid #7b1fa2;
+      color: #e1dfff;
+    }
+    body.dark input:focus {
+      border-color: #9c27b0;
+      box-shadow: 0 0 8px #9c27b0aa;
+    }
+    body.dark button {
+      background: #7b1fa2;
+      color: #eee;
+      box-shadow: none;
+    }
+    body.dark button:hover {
+      background: #6a1b9a;
+      box-shadow: none;
+    }
+    body.dark ul li {
+      color: #d1c9ff;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>⏰ Timer & Alarm Clock</h1>
+  <button id="darkModeToggle" aria-pressed="false">Toggle Light/Dark Mode</button>
+
+  <!-- Digital Clock Display -->
+  <div id="clock" class="section">--:--:--</div>
+
+  <!-- Countdown Timer -->
+  <div class="section">
+    <h2>🕒 Countdown Timer</h2>
+    <div>
+      <label>Hours: <input type="number" id="timerHours" value="0" min="0" /></label>
+      <label>Minutes: <input type="number" id="timerMinutes" value="1" min="0" /></label>
+    </div>
+    <div class="time-display" id="countdown">00:00:00</div>
+    <button onclick="startTimer();glowButton(this)">Start Timer</button>
+    <button onclick="stopTimer();glowButton(this)">Stop Timer</button>
+    <button onclick="resetTimer();glowButton(this)">Reset Timer</button>
+  </div>
+
+  <!-- Set Alarm -->
+  <div class="section">
+    <h2>⏳ Set Alarm Time</h2>
+    <div>
+      <label>Alarm Hour: <input type="number" id="alarmHour" min="0" max="23" /></label>
+      <label>Alarm Minute: <input type="number" id="alarmMinute" min="0" max="59" /></label>
+    </div>
+    <button onclick="setAlarm();glowButton(this)">Set Alarm</button>
+    <button onclick="clearAlarms();glowButton(this)">Clear Alarms</button>
+    <p id="alarmStatus">No alarm set.</p>
+    <ul id="alarmList"></ul>
+  </div>
+
+  <!-- Sounds -->
+  <audio id="alarmSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" preload="auto"></audio>
+  <audio id="resetSound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
+
+  <script>
+    // Dark Mode Handling
+    const darkModeToggle = document.getElementById('darkModeToggle');
+
+    function applyDarkModeFromStorageOrAuto() {
+      const saved = localStorage.getItem('dark-mode');
+      const hour = new Date().getHours();
+
+      if (saved === 'true') {
+        document.body.classList.add('dark');
+        darkModeToggle.setAttribute('aria-pressed', 'true');
+      } else if (saved === 'false') {
+        document.body.classList.remove('dark');
+        darkModeToggle.setAttribute('aria-pressed', 'false');
+      } else {
+        // No saved preference - auto dark mode after 7 PM or before 7 AM
+        if (hour >= 19 || hour < 7) {
+          document.body.classList.add('dark');
+          darkModeToggle.setAttribute('aria-pressed', 'true');
+        } else {
+          document.body.classList.remove('dark');
+          darkModeToggle.setAttribute('aria-pressed', 'false');
+        }
+      }
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('dark');
+      darkModeToggle.setAttribute('aria-pressed', isDark.toString());
+      localStorage.setItem('dark-mode', isDark.toString());
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      applyDarkModeFromStorageOrAuto();
+      updateClock();
+    });
+
+    // Digital Clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("clock").textContent = now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+
+    // Countdown Timer
+    let countdownInterval;
+    function startTimer() {
+      let hours = parseInt(document.getElementById("timerHours").value) || 0;
+      let minutes = parseInt(document.getElementById("timerMinutes").value) || 0;
+      let totalSeconds = (hours * 3600) + (minutes * 60);
+
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        if (totalSeconds <= 0) {
+          clearInterval(countdownInterval);
+          document.getElementById("countdown").textContent = "00:00:00";
+          document.getElementById("alarmSound").play();
+          alert("⏰ Timer ended!");
+          return;
+        }
+
+        let hrs = Math.floor(totalSeconds / 3600);
+        let mins = Math.floor((totalSeconds % 3600) / 60);
+        let secs = totalSeconds % 60;
+
+        document.getElementById("countdown").textContent =
+          `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        totalSeconds--;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(countdownInterval);
+    }
+
+    function resetTimer() {
+      clearInterval(countdownInterval);
+      document.getElementById("timerHours").value = 0;
+      document.getElementById("timerMinutes").value = 1;
+      document.getElementById("countdown").textContent = "00:00:00";
+
+      // Play reset sound
+      const resetSound = document.getElementById("resetSound");
+      resetSound.currentTime = 0;
+      resetSound.play();
+
+      // Quick flash effect
+      const countdownDisplay = document.getElementById("countdown");
+      countdownDisplay.style.backgroundColor = "#fce4f4";
+      setTimeout(() => {
+        countdownDisplay.style.backgroundColor = "transparent";
+      }, 300);
+    }
+
+    function glowButton(btn) {
+      btn.classList.add("glow");
+      setTimeout(() => {
+        btn.classList.remove("glow");
+      }, 500);
+    }
+
+    // Alarms
+    let alarms = [];
+
+    function setAlarm() {
+      const hour = parseInt(document.getElementById("alarmHour").value);
+      const minute = parseInt(document.getElementById("alarmMinute").value);
+
+      if (isNaN(hour) || isNaN(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+        alert("Please enter a valid alarm time.");
+        return;
+      }
+
+      const alarmTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+      if (!alarms.includes(alarmTime)) {
+        alarms.push(alarmTime);
+        updateAlarmList();
+      }
+    }
+
+    function clearAlarms() {
+      alarms = [];
+      updateAlarmList();
+    }
+
+    function updateAlarmList() {
+      const alarmList = document.getElementById("alarmList");
+      alarmList.innerHTML = "";
+      if (alarms.length === 0) {
+        document.getElementById("alarmStatus").textContent = "No alarm set.";
+      } else {
+        document.getElementById("alarmStatus").textContent = "Active Alarms:";
+        alarms.forEach(time => {
+          const li = document.createElement("li");
+          li.textContent = `🔔 ${time}`;
+          alarmList.appendChild(li);
+        });
+      }
+    }
+
+    // Check for alarms every second
+    setInterval(() => {
+      const now = new Date();
+      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      if (alarms.includes(currentTime)) {
+        document.getElementById("alarmSound").play();
+        alert("🔔 Alarm ringing!");
+        alarms = alarms.filter(t => t !== currentTime);
+        updateAlarmList();
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

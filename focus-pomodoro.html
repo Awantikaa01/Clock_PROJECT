@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🎯 Focus Timer & 🍅 Pomodoro Tracker</title>
+  <style>
+    /* Light Mode */
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #ef4ecc, #f9a8d4);
+      margin: 0;
+      padding: 40px 20px;
+      text-align: center;
+      color: #4a0033;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 2.8em;
+      margin-bottom: 30px;
+      color: #9c27b0;
+      text-shadow: 1px 1px 4px #ffb3da;
+    }
+
+    button {
+      margin: 10px 8px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      background: #ba68c8;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 10px rgba(186, 104, 200, 0.6);
+      font-size: 1rem;
+      user-select: none;
+    }
+
+    button:hover {
+      background: #8e24aa;
+      box-shadow: 0 6px 16px rgba(142, 36, 170, 0.8);
+    }
+
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(74, 0, 51, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      display: none;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      background: #fff0f6;
+      padding: 30px 25px;
+      border-radius: 16px;
+      text-align: center;
+      width: 320px;
+      box-shadow: 0 8px 20px rgba(186, 104, 200, 0.3);
+      color: #4a0033;
+      user-select: none;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    #focusLabel {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      color: #7b1fa2;
+      font-weight: 600;
+      text-shadow: 1px 1px 2px #d199db;
+    }
+
+    #focusTime {
+      font-size: 4rem;
+      font-weight: 900;
+      letter-spacing: 4px;
+      margin: 15px 0 30px;
+      color: #4a148c;
+      font-family: 'Courier New', monospace;
+      text-shadow: 2px 2px 6px #b46bbf;
+    }
+
+    /* Pomodoro Tracker */
+    #pomodoro-progress {
+      margin: 40px auto 0;
+      max-width: 360px;
+      background: #f9a8d4;
+      border-radius: 16px;
+      padding: 20px 15px;
+      box-shadow: 0 10px 25px rgba(156,39,176,0.3);
+      color: #4a0033;
+      user-select: none;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    #pomodoro-progress h2 {
+      margin-bottom: 12px;
+      font-weight: 700;
+      font-size: 1.6rem;
+      text-shadow: 1px 1px 3px #bb71c3;
+    }
+
+    #pomodoro-progress p {
+      margin: 8px 0 20px;
+      font-weight: 500;
+      font-style: italic;
+      text-shadow: 1px 1px 1px #d99ddb;
+    }
+
+    #pomodoro-dots {
+      font-size: 2.4rem;
+      min-height: 40px;
+      user-select: none;
+    }
+
+    /* Pomodoro Buttons */
+    #pomodoro-progress button {
+      background: #8e24aa;
+      margin: 12px 8px 0 8px;
+      font-size: 1.1rem;
+      padding: 10px 22px;
+      font-weight: 700;
+      transition: background-color 0.25s, box-shadow 0.3s;
+      box-shadow: 0 5px 14px rgba(142, 36, 170, 0.7);
+      color: white;
+      cursor: pointer;
+      border-radius: 8px;
+      user-select: none;
+    }
+    #pomodoro-progress button:hover {
+      background: #6a1b9a;
+      box-shadow: 0 7px 20px rgba(106, 27, 154, 0.9);
+    }
+
+    /* Pop animation for Pomodoro dots */
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      60% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    #pomodoro-dots span {
+      display: inline-block;
+      animation: popIn 0.4s ease;
+      margin: 0 3px;
+    }
+
+    /* Dark Mode Styles */
+    body.dark {
+      background: linear-gradient(135deg, #311432, #611f5a);
+      color: #f8d7e0;
+    }
+
+    body.dark button {
+      background: #bb2d4e;
+      color: white;
+      box-shadow: 0 5px 16px rgba(187, 45, 78, 0.85);
+    }
+    body.dark button:hover {
+      background: #d24a63;
+      box-shadow: 0 7px 22px rgba(210, 74, 99, 1);
+    }
+
+    body.dark input {
+      background: #4a224b;
+      color: #f8d7e0;
+      border: 1px solid #7f4a7f;
+    }
+
+    body.dark .modal {
+      background: rgba(54, 15, 44, 0.9);
+      backdrop-filter: blur(5px);
+    }
+
+    body.dark .modal-content {
+      background: #4a224b;
+      color: #f8d7e0;
+      box-shadow: 0 8px 25px rgba(187, 45, 78, 0.7);
+    }
+
+    body.dark #pomodoro-progress {
+      background: #3a154a;
+      color: #f8d7e0;
+      box-shadow: 0 10px 25px rgba(210, 74, 99, 0.4);
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>🎯 Focus Timer & 🍅 Pomodoro Tracker</h1>
+
+  <button id="openFocusTimerBtn" aria-haspopup="dialog" aria-controls="focusModal">Start Focus Timer</button>
+
+  <!-- Focus Timer Modal -->
+  <div id="focusModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="focusLabel">
+    <div class="modal-content" role="document">
+      <h2>Focus Timer</h2>
+      <h3 id="focusLabel">Focus Time</h3>
+      <p id="focusTime">25:00</p>
+      <button onclick="startFocus()" aria-label="Start focus timer">Start</button>
+      <button onclick="stopFocus()" aria-label="Stop focus timer">Stop</button>
+      <button onclick="resetFocus()" aria-label="Reset focus timer">Reset</button>
+    </div>
+  </div>
+
+  <!-- Pomodoro Tracker Section -->
+  <div id="pomodoro-progress" aria-live="polite" aria-atomic="true">
+    <h2>🍅 Pomodoro Tracker</h2>
+    <p>Each 🍅 = one 25 min focus session</p>
+    <button onclick="addPomodoro()" aria-label="Add a pomodoro session">➕ Add</button>
+    <button onclick="resetPomodoros()" aria-label="Reset pomodoro sessions">🔁 Reset</button>
+    <div id="pomodoro-dots" aria-label="Pomodoro sessions completed"></div>
+  </div>
+
+  <script>
+    const focusModal = document.getElementById("focusModal");
+    const openFocusTimerBtn = document.getElementById("openFocusTimerBtn");
+    const focusTime = document.getElementById("focusTime");
+    const focusLabel = document.getElementById("focusLabel");
+    const pomodoroDots = document.getElementById("pomodoro-dots");
+
+    let pomodoroCount = parseInt(localStorage.getItem('pomodoroCount')) || 0;
+    let focusMinutes = 25;
+    let focusSeconds = 0;
+    let isFocus = true; // true = focus session, false = break
+    let focusInterval;
+
+    function updatePomodoroDisplay() {
+      pomodoroDots.innerHTML = '';
+      for (let i = 0; i < pomodoroCount; i++) {
+        const dot = document.createElement('span');
+        dot.textContent = '🍅';
+        pomodoroDots.appendChild(dot);
+      }
+    }
+
+    function addPomodoro() {
+      pomodoroCount++;
+      localStorage.setItem('pomodoroCount', pomodoroCount);
+      updatePomodoroDisplay();
+    }
+
+    function resetPomodoros() {
+      if (confirm("Reset all Pomodoro sessions?")) {
+        pomodoroCount = 0;
+        localStorage.setItem('pomodoroCount', pomodoroCount);
+        updatePomodoroDisplay();
+        resetFocus();
+      }
+    }
+
+    function updateFocusDisplay() {
+      focusTime.innerText = `${String(focusMinutes).padStart(2, '0')}:${String(focusSeconds).padStart(2, '0')}`;
+    }
+
+    function startFocus() {
+      clearInterval(focusInterval);
+      focusInterval = setInterval(() => {
+        if (focusSeconds === 0) {
+          if (focusMinutes === 0) {
+            clearInterval(focusInterval);
+            if (isFocus) {
+              addPomodoro();
+              focusMinutes = (pomodoroCount % 4 === 0) ? 15 : 5;
+              isFocus = false;
+              focusLabel.innerText = "Break Time";
+            } else {
+              focusMinutes = 25;
+              isFocus = true;
+              focusLabel.innerText = "Focus Time";
+            }
+            focusSeconds = 0;
+            updateFocusDisplay();
+            startFocus();
+            return;
+          }
+          focusMinutes--;
+          focusSeconds = 59;
+        } else {
+          focusSeconds--;
+        }
+        updateFocusDisplay();
+      }, 1000);
+    }
+
+    function stopFocus() {
+      clearInterval(focusInterval);
+    }
+
+    function resetFocus() {
+      clearInterval(focusInterval);
+      focusMinutes = 25;
+      focusSeconds = 0;
+      isFocus = true;
+      focusLabel.innerText = "Focus Time";
+      updateFocusDisplay();
+    }
+
+    openFocusTimerBtn.onclick = () => {
+      focusModal.style.display = "flex";
+      resetFocus();
+      focusModal.setAttribute('aria-hidden', 'false');
+    };
+
+    window.onclick = (e) => {
+      if (e.target === focusModal) {
+        focusModal.style.display = "none";
+        resetFocus();
+        focusModal.setAttribute('aria-hidden', 'true');
+      }
+    };
+
+    updatePomodoroDisplay();
+    updateFocusDisplay();
+
+    // Dark Mode from storage or time (auto 7 PM)
+    function applyDarkModeFromStorage() {
+      const stored = localStorage.getItem('dark-mode') === 'true';
+      const hour = new Date().getHours();
+
+      if (stored || hour >= 19 || hour < 7) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      applyDarkModeFromStorage();
+    });
+  </script>
+
+</body>
+</html>

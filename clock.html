@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analog Clock</title>
+  <link rel="stylesheet" href="clock.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>Analog Clock</h1>
+
+  <div id="dateDisplay"></div>
+
+  <div id="quote" class="quote">
+    <p id="quote-text">“Loading local quote…”</p>
+    <p id="quote-author" style="text-align:right; margin-top: 8px;">—</p>
+    
+  </div>
+
+  <div class="controls">
+    <button id="toggleMode">Toggle Light/Dark</button>
+    <button onclick="openTimer()">Timer/Alarm Clock</button>
+    <!-- Focus Timer now opens the new page -->
+    <button id="startFocusBtn" onclick="window.open('focus-pomodoro.html', '_blank', 'width=900,height=800')">
+      Start Focus Timer 🍅</button>
+    <button onclick="openCalendarTodo()">📅 Calendar & To-Do</button>
+    <button onclick="openCalculator()">🧮 Calculator</button>
+
+  </div>
+
+  <div class="clock">
+    <div class="numbers"></div>
+    <div class="hand hour" id="hour"></div>
+    <div class="hand minute" id="minute"></div>
+    <div class="hand second" id="second"></div>
+    <audio id="tick" src="https://www.fesliyanstudios.com/play-mp3/387" preload="auto"></audio>
+  </div>
+
+
+
+  <script src="clock.js"></script>
+</body>
+</html>
+
